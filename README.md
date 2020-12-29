@@ -2,7 +2,7 @@
 Repositorio para aplicación móvil correspondiente al proyecto CoastSnap-Valdivia EC
 Plataforma para el monitoreo comunitario del perfil costero en la comuna Valdivia
 
-### Github Matlab
+### Github CoastSnap Community Beach Monitoring ToolBox
 [CoastSnap](https://github.com/Coastal-Imaging-Research-Network/CoastSnap-Toolbox)
 
 ### Redes Sociales
