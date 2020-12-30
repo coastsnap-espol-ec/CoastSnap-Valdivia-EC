@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
+
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
         takePictureBtn.setOnClickListener(new View.OnClickListener() {

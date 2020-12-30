@@ -5,7 +5,7 @@
 
     <!-- Reemplazar el ic_menu_camera con el .svg generado-->
     <item
-        android:drawable="@drawable/logo_coastsnap"
+        android:drawable="@drawable/logo_coast_snap_resized"
         android:gravity="center" />
 
 </layer-list>
