@@ -1,4 +1,4 @@
-package com.journaldev.androidcamerax;
+package com.coastsnap.beachmonitoring;
 
 import android.content.Context;
 

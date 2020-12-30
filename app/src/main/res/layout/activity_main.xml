@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Previsualization of the camera -->
     <TextureView
         android:id="@+id/view_finder"
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Button to take the photo (Customize the image button later) -->
     <ImageButton
         android:id="@+id/imgCapture"
         android:layout_width="72dp"
@@ -23,6 +25,7 @@
         app:srcCompat="@android:drawable/ic_menu_camera"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription= "@string/button_for_taking_picture" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

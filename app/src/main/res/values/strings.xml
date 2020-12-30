@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AndroidCameraX</string>
+    <string name="app_name">SnapCoast Valdivia EC</string>
+    <string name="button_for_taking_picture">Button for taking picture</string>
 </resources>

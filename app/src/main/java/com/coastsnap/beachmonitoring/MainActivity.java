@@ -1,4 +1,4 @@
-package com.journaldev.androidcamerax;
+package com.coastsnap.beachmonitoring;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,7 +10,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import java.io.File;
 
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     TextureView textureView;
+    ImageButton takePictureBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         textureView = findViewById(R.id.view_finder);
+        takePictureBtn = findViewById(R.id.imgCapture);
 
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
-        findViewById(R.id.imgCapture).setOnClickListener(new View.OnClickListener() {
+        takePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //bind to lifecycle:
-        CameraX.bindToLifecycle((LifecycleOwner)this, preview, imgCap);
+        CameraX.bindToLifecycle(this, preview, imgCap);
     }
 
     private void updateTransform(){
