@@ -3,9 +3,9 @@
 
     <item android:drawable="@color/colorPrimary" />
 
-    <!-- Reemplazar el ic_menu_camera con el .svg generado-->
+    <!-- Reemplazar el ic_menu_camera con el .svg generado -->
     <item
-        android:drawable="@drawable/logo_coast_snap_resized"
+        android:drawable="@drawable/coastsnapsplashscreen"
         android:gravity="center" />
 
 </layer-list>
