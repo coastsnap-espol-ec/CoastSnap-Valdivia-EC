@@ -77,11 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
         ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
                 .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).build();
+
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
         takePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /*File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "SnapCoast Valdivia");
+
+                // Create the storage directory if it does not exist
+                if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                    Log.d(APP_TAG, "failed to create directory");
+                }
+                */
                 File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
                 imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
