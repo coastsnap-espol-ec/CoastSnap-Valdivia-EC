@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
@@ -23,12 +24,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private final int REQUEST_CODE_PERMISSIONS = 101;
-    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
+    public final String APP_TAG = "SnapCoast App";
+    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION"};
     TextureView textureView;
     ImageButton takePictureBtn;
 
@@ -84,14 +90,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /*File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "SnapCoast Valdivia");
+                File mediaStorageDir = Environment.getExternalStorageDirectory();
+                File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast");
 
                 // Create the storage directory if it does not exist
-                if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+                if (!directory.exists() && !directory.mkdirs()){
                     Log.d(APP_TAG, "failed to create directory");
                 }
-                */
-                File file = new File(Environment.getExternalStorageDirectory() + "/" + System.currentTimeMillis() + ".png");
+
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+
+                File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
+                System.out.println("Directorio: " + Environment.getExternalStorageDirectory());
+                System.out.println("Directorio final: " + file.getAbsolutePath());
+
                 imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
