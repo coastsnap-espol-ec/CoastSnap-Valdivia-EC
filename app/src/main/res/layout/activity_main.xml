@@ -31,12 +31,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_camera" />
 
-    <!--
-    <pl.droidsonroids.gif.GifTextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/coastsnapsplashscreen"
-        />
-    -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

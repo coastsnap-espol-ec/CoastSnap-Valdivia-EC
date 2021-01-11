@@ -10,10 +10,12 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -23,10 +25,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
-import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import java.util.Locale;
 
 
@@ -35,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_CODE_PERMISSIONS = 101;
     public final String APP_TAG = "SnapCoast App";
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION"};
+    FusedLocationProviderClient fusedLocationProviderClient;
     TextureView textureView;
     ImageButton takePictureBtn;
 
@@ -48,8 +58,36 @@ public class MainActivity extends AppCompatActivity {
 
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
+            getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
+    }
+
+    private void getCurrentLocation() {
+        final LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(3000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("No hay permisos suficientes");
+        } else {
+
+            LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
+                    if (locationResult != null && locationResult.getLocations().size() > 0) {
+                        int lastestLocationIndex = locationResult.getLocations().size() - 1;
+                        double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
+                        double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
+                        System.out.println("Latitud: " + latitude);
+                        System.out.println("Longitud: " + longitude);
+                    }
+                }
+            }, Looper.getMainLooper());
         }
     }
 
@@ -57,20 +95,20 @@ public class MainActivity extends AppCompatActivity {
 
         CameraX.unbindAll();
 
-        Rational aspectRatio = new Rational (textureView.getWidth(), textureView.getHeight());
+        Rational aspectRatio = new Rational(textureView.getWidth(), textureView.getHeight());
         Size screen = new Size(textureView.getWidth(), textureView.getHeight()); //size of the screen
 
 
         PreviewConfig pConfig = new PreviewConfig.Builder()
-                                    .setTargetAspectRatio(aspectRatio)
-                                    .setTargetResolution(screen)
-                                    .build();
+                .setTargetAspectRatio(aspectRatio)
+                .setTargetResolution(screen)
+                .build();
         Preview preview = new Preview(pConfig);
 
         preview.setOnPreviewOutputUpdateListener(
                 new Preview.OnPreviewOutputUpdateListener() {
                     @Override
-                    public void onUpdated(Preview.PreviewOutput output){
+                    public void onUpdated(Preview.PreviewOutput output) {
                         ViewGroup parent = (ViewGroup) textureView.getParent();
                         parent.removeView(textureView);
                         parent.addView(textureView, 0);
@@ -86,15 +124,19 @@ public class MainActivity extends AppCompatActivity {
 
         final ImageCapture imgCap = new ImageCapture(imageCaptureConfig);
 
+        //Initialize fusedLocationProviderClient
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         takePictureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 File mediaStorageDir = Environment.getExternalStorageDirectory();
                 File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast");
 
                 // Create the storage directory if it does not exist
-                if (!directory.exists() && !directory.mkdirs()){
+                if (!directory.exists() && !directory.mkdirs()) {
                     Log.d(APP_TAG, "failed to create directory");
                 }
 
@@ -107,14 +149,15 @@ public class MainActivity extends AppCompatActivity {
                 imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
+
                         String msg = "Pic captured at " + file.getAbsolutePath();
-                        Toast.makeText(getBaseContext(), msg,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
                     }
 
                     @Override
                     public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
                         String msg = "Pic capture failed : " + message;
-                        Toast.makeText(getBaseContext(), msg,Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
                         if (cause != null) {
                             cause.printStackTrace();
                         }
@@ -165,12 +208,14 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera();
+                getCurrentLocation();
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
     }
+
 
     private boolean allPermissionsGranted(){
 
