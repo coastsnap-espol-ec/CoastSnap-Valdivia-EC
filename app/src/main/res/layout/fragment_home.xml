@@ -15,6 +15,7 @@
         android:layout_marginTop="88dp"
         android:text="Como usar \nCoastSnap-Valdivia?"
         android:textSize="35dp"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,6 +29,7 @@
 y una vez tomada la foto, súbelas a tus redes sociales y etiqueta a las cuentas de SnapCoast
 en Facebook, Instagram y Twitter para así poder analizar el perfil costero de la playa."
         android:textSize="17dp"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
