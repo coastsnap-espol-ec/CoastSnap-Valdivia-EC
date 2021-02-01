@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -33,9 +34,12 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private final int REQUEST_CODE_PERMISSIONS = 101;
     public final String APP_TAG = "SnapCoast App";
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION"};
+    private ArrayList<Double> latLongImg;
     FusedLocationProviderClient fusedLocationProviderClient;
     TextureView textureView;
     ImageButton takePictureBtn;
@@ -58,13 +63,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
-            getCurrentLocation();
+            latLongImg = getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
 
-    private void getCurrentLocation() {
+    private ArrayList<Double> getCurrentLocation() {
+
+        final ArrayList<Double> latLong = new ArrayList<>();  //arreglo para almacenar latitud y longitud
+
         final LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(3000);
@@ -83,12 +91,19 @@ public class MainActivity extends AppCompatActivity {
                         int lastestLocationIndex = locationResult.getLocations().size() - 1;
                         double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
                         double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
+
+                        latLong.add(latitude);
+                        latLong.add(longitude);
+
                         System.out.println("Latitud: " + latitude);
                         System.out.println("Longitud: " + longitude);
+
+                        System.out.println(latLong);
                     }
                 }
             }, Looper.getMainLooper());
         }
+        return latLong;
     }
 
     private void startCamera() {
@@ -133,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 File mediaStorageDir = Environment.getExternalStorageDirectory();
-                File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast");
+                File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast-Valdivia");
 
                 // Create the storage directory if it does not exist
                 if (!directory.exists() && !directory.mkdirs()) {
@@ -146,12 +161,27 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Directorio: " + Environment.getExternalStorageDirectory());
                 System.out.println("Directorio final: " + file.getAbsolutePath());
 
+
                 imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
                     @Override
                     public void onImageSaved(@NonNull File file) {
 
                         String msg = "Pic captured at " + file.getAbsolutePath();
                         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
+
+
+                        try {
+                            ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+                            exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, String.valueOf(latLongImg.get(0))); //latitud
+                            exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, String.valueOf(latLongImg.get(1))); //longitud
+                            exifInterface.saveAttributes();
+                            Log.e("LATITUDE: ", String.valueOf(latLongImg.get(0)));
+                            Log.e("LONGITUDE: ", String.valueOf(latLongImg.get(1)));
+
+
+                        }catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
                     }
 
                     @Override
@@ -208,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera();
-                getCurrentLocation();
+                latLongImg = getCurrentLocation();
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 finish();
