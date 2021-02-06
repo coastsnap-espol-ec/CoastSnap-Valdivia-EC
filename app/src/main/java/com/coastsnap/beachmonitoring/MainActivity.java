@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -265,14 +266,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                //onBackPressed();
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == android.R.id.home){
+            Intent dashboardIntent = new Intent(this, DashboardActivity.class);
+            dashboardIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(dashboardIntent);
         }
+        return super.onOptionsItemSelected(item);
     }
 }
