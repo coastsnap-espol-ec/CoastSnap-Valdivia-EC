@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SnapCoast Valdivia EC</string>
     <string name="button_for_taking_picture">Button for taking picture</string>
-    <string name="title_activity_dashboard">MainActivity</string>
+    <string name="title_activity_dashboard">CoastSnap</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_about_us">About Us</string>
