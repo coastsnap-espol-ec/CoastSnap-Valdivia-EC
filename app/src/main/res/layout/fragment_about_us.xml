@@ -7,26 +7,79 @@
     android:background="@drawable/gradient"
     tools:context=".ui.about_us.AboutUsFragment">
 
-    <TextView
-        android:id="@+id/text_about_us"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.005">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/redes_coast_snap"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="226dp"
+                android:layout_marginTop="48dp"
+                android:src="@drawable/logo_social_media_coastsnap_valdivia"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent finibus et purus id gravida. Mauris et lectus quis felis malesuada commodo. Maecenas bibendum lobortis nisl, vel placerat ex elementum nec. Suspendisse sapien dui, tempor eu ex eu, mollis consequat enim. Duis congue, lectus in semper laoreet, velit velit imperdiet elit, sit amet efficitur nibh dolor quis massa. Fusce lectus mi, rutrum eget velit sed, eleifend hendrerit sem. Fusce ut nisl quam. Nam accumsan ipsum eget nulla viverra volutpat. In ornare sit amet quam vitae convallis. Sed id consequat ipsum"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent finibus et purus id gravida. Mauris et lectus quis felis malesuada commodo. Maecenas bibendum lobortis nisl, vel placerat ex elementum nec. Suspendisse sapien dui, tempor eu ex eu, mollis consequat enim. Duis congue, lectus in semper laoreet, velit velit imperdiet elit, sit amet efficitur nibh dolor quis massa. Fusce lectus mi, rutrum eget velit sed, eleifend hendrerit sem. Fusce ut nisl quam. Nam accumsan ipsum eget nulla viverra volutpat. In ornare sit amet quam vitae convallis. Sed id consequat ipsum"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text1" />
+
+            <TextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent finibus et purus id gravida. Mauris et lectus quis felis malesuada commodo. Maecenas bibendum lobortis nisl, vel placerat ex elementum nec. Suspendisse sapien dui, tempor eu ex eu, mollis consequat enim. Duis congue, lectus in semper laoreet, velit velit imperdiet elit, sit amet efficitur nibh dolor quis massa. Fusce lectus mi, rutrum eget velit sed, eleifend hendrerit sem. Fusce ut nisl quam. Nam accumsan ipsum eget nulla viverra volutpat. In ornare sit amet quam vitae convallis. Sed id consequat ipsum"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text2" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
