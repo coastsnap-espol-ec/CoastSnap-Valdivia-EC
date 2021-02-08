@@ -10,14 +10,14 @@
 
     <TextView
         android:id="@+id/text_home"
-        android:layout_width="376dp"
-        android:layout_height="97dp"
+        android:layout_width="340dp"
+        android:layout_height="100dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/mandali"
-        android:text="Como usar\nCoastSnap-Valdivia?"
+        android:text="@string/home_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         android:textColor="#FFFFFF"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,17 +26,15 @@
 
     <TextView
         android:id="@+id/txtBody"
-        android:layout_width="373dp"
-        android:layout_height="298dp"
+        android:layout_width="340dp"
+        android:layout_height="320dp"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/mandali"
-        android:text="La aplicación CoastSnap-Valdivia es una camára que captura imágenes desde el mirador de Valdivia.\nPara colaborar con el proyecto, sólo debes acceder a la cámara a través del botón A tomar fotos!
-y una vez tomada la foto, súbelas a tus redes sociales y etiqueta a las cuentas de SnapCoast
-en Facebook, Instagram y Twitter para así poder analizar el perfil costero de la playa."
+        android:text="@string/home_description"
         android:textAlignment="gravity"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#FFFFFF"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
@@ -53,7 +51,7 @@ en Facebook, Instagram y Twitter para así poder analizar el perfil costero de l
         android:drawableStart="@drawable/ic_baseline_photo_camera_24"
         android:drawablePadding="2dp"
         android:fontFamily="@font/mandali"
-        android:text="A tomar fotos!"
+        android:text="@string/button_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textColor="#FFFF"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,6 +66,7 @@ en Facebook, Instagram y Twitter para así poder analizar el perfil costero de l
         android:src="@drawable/redes_coast_snap"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/social_media" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
