@@ -16,15 +16,14 @@
             android:id="@+id/text_home"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
             android:fontFamily="@font/arvo"
             android:text="@string/home_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="#FFFFFF"
-            android:textSize="32sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/txtBody"
-            app:layout_constraintDimensionRatio="4:1"
+            app:layout_constraintDimensionRatio="12:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -40,16 +39,15 @@
             android:textAlignment="gravity"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="10dp"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="normal"
             app:layout_constraintBottom_toTopOf="@+id/btnToCamera"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="2.3:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/text_home"
-            app:lineHeight="28dp" />
+            app:lineHeight="30dp" />
 
         <Button
             android:id="@+id/btnToCamera"
@@ -57,13 +55,12 @@
             android:layout_height="0dp"
             android:background="@drawable/rounded_corners"
             android:drawableStart="@drawable/ic_baseline_photo_camera_24"
-            android:drawablePadding="2dp"
             android:fontFamily="@font/mandali"
             android:text="@string/button_text"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFF"
             app:layout_constraintBottom_toTopOf="@+id/imgViewSocial"
-            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -73,16 +70,34 @@
             android:id="@+id/imgViewSocial"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:contentDescription="@string/social_media"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/redes_coastsnap_2"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="10:3"
+            app:layout_constraintBottom_toTopOf="@+id/bloque"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/btnToCamera" />
+
+        <LinearLayout
+            android:id="@+id/bloque"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@+id/imgViewSocial">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\n\n\n\n\n\n\n\n\n\n\n"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
