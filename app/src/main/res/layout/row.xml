@@ -7,8 +7,9 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image"
+            android:layout_marginTop="10dp"
             android:layout_width="50dp"
-            android:layout_height="72dp"
+            android:layout_height="50dp"
             android:src="@drawable/logo_social_media_coastsnap_valdivia" />
 
         <LinearLayout
