@@ -72,6 +72,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewVersion" />
 
+        <ListView
+            android:id="@+id/listViewID"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:paddingTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/div2"
+            tools:layout_editor_absoluteX="40dp" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

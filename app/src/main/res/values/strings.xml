@@ -11,7 +11,13 @@
         CoastSnap-Valdivia?</string>
     <string name="home_description">La aplicación CoastSnap-Valdivia es una camára que captura imágenes desde el mirador de Valdivia.
         Para colaborar con el proyecto, sólo debes acceder a la cámara a través del botón A tomar fotos! y una vez tomada la foto, súbelas a tus redes sociales y etiqueta a las cuentas de CoastSnap en Facebook, Instagram y Twitter para así poder analizar el perfil costero de la playa.</string>
-    <string name="about_coastsnap">CoastSnap es un proyecto de la universidad de New South Wales (UNSW) en Australia en asociación con el gobierno de NSW con el objetivo de desarrollar herramientas y técnicas para hacer realidad el monitoreo de platas comunitatias de forma simple y precisa.
+    <string name="about_coastsnap">CoastSnap es un proyecto de la universidad de New South Wales (UNSW) en Australia en asociación con el gobierno de NSW con el objetivo de desarrollar herramientas y técnicas para hacer realidad el monitoreo de platas comunitatias de forma simple y precisa.\n\n
+        Desarrollado por los estudiantes:\n\n
+        Mishell Yagual
+        Luis Wong
+        Javier Arce\n\n
+        Tutor:\n\n
+        Ing. Andrés Villavicencio\n
     </string>
     <string name="app_version">Version 1.0</string>
 </resources>

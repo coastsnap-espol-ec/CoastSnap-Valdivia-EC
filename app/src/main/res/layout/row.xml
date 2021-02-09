@@ -7,8 +7,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="50dp"
+            android:layout_height="72dp"
             android:src="@drawable/logo_social_media_coastsnap_valdivia" />
 
         <LinearLayout
@@ -28,7 +28,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/subtitle"
+                android:id="@+id/subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
