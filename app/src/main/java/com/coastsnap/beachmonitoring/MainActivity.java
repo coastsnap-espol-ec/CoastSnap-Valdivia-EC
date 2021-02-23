@@ -12,11 +12,12 @@ import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
+import androidx.exifinterface.media.ExifInterface;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import java.util.List;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No hay permisos suficientes");
+            System.out.println("Not enough permissions");
         } else {
 
             LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
@@ -102,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
                         latLong.add(latitude);
                         latLong.add(longitude);
 
-                        System.out.println("Latitud: " + latitude);
-                        System.out.println("Longitud: " + longitude);
+                        System.out.println("Latitude: " + latitude);
+                        System.out.println("Longitude: " + longitude);
 
                         System.out.println(latLong);
                     }
@@ -128,16 +130,13 @@ public class MainActivity extends AppCompatActivity {
         Preview preview = new Preview(pConfig);
 
         preview.setOnPreviewOutputUpdateListener(
-                new Preview.OnPreviewOutputUpdateListener() {
-                    @Override
-                    public void onUpdated(Preview.PreviewOutput output) {
-                        ViewGroup parent = (ViewGroup) textureView.getParent();
-                        parent.removeView(textureView);
-                        parent.addView(textureView, 0);
+                output -> {
+                    ViewGroup parent = (ViewGroup) textureView.getParent();
+                    parent.removeView(textureView);
+                    parent.addView(textureView, 0);
 
-                        textureView.setSurfaceTexture(output.getSurfaceTexture());
-                        updateTransform();
-                    }
+                    textureView.setSurfaceTexture(output.getSurfaceTexture());
+                    updateTransform();
                 });
 
 
@@ -153,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
                 File mediaStorageDir = Environment.getExternalStorageDirectory();
                 File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast-Valdivia");
 
@@ -164,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
-                File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
+                File file = new File(directory + "/" + "IMG_" + timeStamp + ".JPEG");
                 System.out.println("Directorio: " + Environment.getExternalStorageDirectory());
                 System.out.println("Directorio final: " + file.getAbsolutePath());
 
@@ -176,8 +174,15 @@ public class MainActivity extends AppCompatActivity {
                         String msg = "Pic captured at " + file.getAbsolutePath();
                         Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
 
-
                         try {
+                            ExifInterface exifInterface =  new ExifInterface(file.getAbsolutePath());
+                            showExifInterface(exifInterface);
+
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+
+                        /*try {
                             ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
                             exifInterface.setAttribute(ExifInterface.TAG_GPS_LATITUDE, String.valueOf(latLongImg.get(0))); //latitud
                             exifInterface.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, String.valueOf(latLongImg.get(1))); //longitud
@@ -188,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
                         }catch (IOException ioException) {
                             ioException.printStackTrace();
-                        }
+                        }*/
                     }
 
                     @Override
@@ -205,6 +210,55 @@ public class MainActivity extends AppCompatActivity {
 
         //bind to lifecycle:
         CameraX.bindToLifecycle(this, preview, imgCap);
+    }
+
+    private void setExifInterface(ExifInterface exifInterface) {
+
+        exifInterface.setLatLong(latLongImg.get(0), latLongImg.get(1));
+
+        double[] latLongValues = exifInterface.getLatLong();
+
+        String latLongExif = Arrays.toString(exifInterface.getLatLong());
+
+        try {
+            exifInterface.saveAttributes();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+        System.out.println(latLongExif);
+        System.out.println(latLongValues[0] + " - " + latLongValues[1]);
+    }
+
+    private void showExifInterface(ExifInterface exifInterface) {
+
+        String myExifInformation = "Exif information ---\n\n";
+        String imgInformation = "Latitude: " + latLongImg.get(0) + "    -   Longitude: " + latLongImg.get(1);
+
+        setExifInterface(exifInterface);
+
+        /*exifInterface.setLatLong(latLongImg.get(0), latLongImg.get(1));
+
+        String latLongExif = Arrays.toString(exifInterface.getLatLong());
+*/
+        exifInterface.setAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION, imgInformation);
+        try {
+            exifInterface.saveAttributes();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+        myExifInformation += getTagString(ExifInterface.TAG_IMAGE_DESCRIPTION, exifInterface);
+        myExifInformation += getTagString(ExifInterface.TAG_DATETIME, exifInterface);
+
+        System.out.println(myExifInformation);
+        //System.out.println(latLongExif);
+
+    }
+
+    private String getTagString(String tagExif, ExifInterface exifInterface) {
+
+        return (tagExif + ": " + exifInterface.getAttribute(tagExif) + "\n");
     }
 
     private void updateTransform(){
