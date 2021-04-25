@@ -23,13 +23,12 @@
             android:textColor="#FFFFFF"
             android:textSize="32sp"
             android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/guideline_tope"
             app:layout_constraintBottom_toTopOf="@+id/txtBody"
             app:layout_constraintDimensionRatio="4:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintHorizontal_bias="0.5" />
 
         <TextView
             android:id="@+id/txtBody"
@@ -40,16 +39,17 @@
             android:textAlignment="gravity"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="0dp"
             android:textSize="20sp"
             android:textStyle="normal"
-            app:layout_constraintBottom_toTopOf="@+id/btnToCamera"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintTop_toBottomOf="@+id/text_home"
             app:lineHeight="28dp" />
+
 
         <Button
             android:id="@+id/btnToCamera"
@@ -62,7 +62,6 @@
             android:text="@string/button_text"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#FFFF"
-            app:layout_constraintBottom_toTopOf="@+id/imgViewSocial"
             app:layout_constraintDimensionRatio="2:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
@@ -73,16 +72,27 @@
             android:id="@+id/imgViewSocial"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/social_media"
             android:scaleType="centerCrop"
             android:src="@drawable/redes_coastsnap_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="10:3"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/btnToCamera" />
+            app:layout_constraintTop_toBottomOf="@+id/btnToCamera"
+            app:layout_constraintVertical_bias="0.3" />
+
+        <Space
+            android:id="@+id/white_space_bottom_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="30dp"
+            android:minWidth="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintStart_toStartOf="@+id/guideline"
+            app:layout_constraintTop_toBottomOf="@id/imgViewSocial" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -97,6 +107,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.95" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_tope"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.035"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

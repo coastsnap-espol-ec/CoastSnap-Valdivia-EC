@@ -4,7 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">#039BE5</item>
-        <item name="colorPrimaryDark">#039BE5</item>
+        <item name="colorPrimaryDark">#0277BD</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="android:fontFamily">@font/arvo</item>
@@ -12,12 +12,13 @@
 
     <!-- Style for the Splash Screen -->
     <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimaryDark">#CFA55E</item>
     </style>
-
+    <!-- "Theme.AppCompat.Light.DarkActionBar" -->
     <style name="CameraTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@android:color/transparent</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">#616161</item>
         <item name="windowActionBarOverlay">true</item>
         <item name="android:fontFamily">@font/arvo</item>
     </style>
