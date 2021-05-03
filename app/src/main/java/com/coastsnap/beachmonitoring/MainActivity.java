@@ -74,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * El metodo permite obtener un arreglo con la latitud y lognitud provista por el locationManager a traves
+     * de los permisos de ubicación de la aplicación. Se corrobora que el  permiso ACCESS_FINE_lOCATION esté
+     * dado para poder obtener los valores.
+     *
+     * @return latLong: arreglo conformado por latitud y longitud
+     */
     private ArrayList<Double> getCurrentLocation() {
         final ArrayList<Double> latLong = new ArrayList<>();  //arreglo para almacenar latitud y longitud
         final LocationRequest locationRequest = new LocationRequest();
@@ -178,7 +185,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                    if (cause != null) {
+                    if (cause != null)
+                    {
                         //cause.printStackTrace();
                         String imageCaptureErrorMsg = "Pic capture failed due to: " + cause.toString();
                         errorAlert.showErrorDialog("Fail to save the taken picture", imageCaptureErrorMsg);
