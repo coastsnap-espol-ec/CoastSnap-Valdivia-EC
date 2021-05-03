@@ -1,4 +1,4 @@
-package com.coastsnap.beachmonitoring;
+package com.coastsnap.beachmonitoring.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,12 +20,9 @@ public class ErrorAlert implements OnKeyListener {
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setNeutralButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (!title.equalsIgnoreCase("About") && !title.equalsIgnoreCase("Directory Error") && !title.equalsIgnoreCase("View")) {
-                            ((Activity) mContext).finish();
-                        }
+                .setNeutralButton("Close", (dialogInterface, i) -> {
+                    if (!title.equalsIgnoreCase("About") && !title.equalsIgnoreCase("Directory Error") && !title.equalsIgnoreCase("View")) {
+                        ((Activity) mContext).finish();
                     }
                 }).create();
         errorDialog.setOnKeyListener(this);

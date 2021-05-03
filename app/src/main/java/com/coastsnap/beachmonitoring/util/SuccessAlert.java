@@ -1,10 +1,9 @@
-package com.coastsnap.beachmonitoring;
+package com.coastsnap.beachmonitoring.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
-import android.graphics.drawable.Icon;
 import android.view.KeyEvent;
 
 public class SuccessAlert implements OnKeyListener {
@@ -20,12 +19,7 @@ public class SuccessAlert implements OnKeyListener {
                 .setTitle(title)
                 .setMessage(message)
                 .setIcon(iconId)
-                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                })
+                .setNeutralButton(android.R.string.ok, (dialogInterface, i) -> dialogInterface.cancel())
                 .create()
                 .show();
     }

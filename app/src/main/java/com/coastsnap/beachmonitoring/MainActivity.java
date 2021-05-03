@@ -27,12 +27,17 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import com.coastsnap.beachmonitoring.util.ErrorAlert;
+import com.coastsnap.beachmonitoring.util.FTPUploader;
+import com.coastsnap.beachmonitoring.util.SuccessAlert;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,16 +45,22 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity {
-
-    private final int REQUEST_CODE_PERMISSIONS = 101;
+    // Configuraciones servidor FTP
+    private static final String SERVER = "192.168.0.16";             // cambiar por direccion del servidor FTP del proyecto CoastSnap.
+    private static final String USERNAME = "ftpuser";                // cambiar por usuario FTP estblecido para el proyecto.
+    private static final String PASSWD = "pass1234";                 // cambiar por pass del usuario FTP (encriptarlo?)
     public final String APP_TAG = "SnapCoast App";
+    // Permisos de la aplicacion
+    private final int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION"};
+    // variables globales
     private ArrayList<Double> latLongImg;
     private ErrorAlert errorAlert;
     private SuccessAlert successAlert;
     FusedLocationProviderClient fusedLocationProviderClient;
     private TextureView textureView;
     private ImageButton takePictureBtn;
+    private FTPUploader ftpUploader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (allPermissionsGranted())
         {
-            startCamera(); //start camera if permission has been granted by user
+            // inicializa la camara si los permisos han sido otorgados por el usuario.
+            startCamera();
+            // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
+            ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
             latLongImg = getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
@@ -75,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * El metodo permite obtener un arreglo con la latitud y lognitud provista por el locationManager a traves
-     * de los permisos de ubicación de la aplicación. Se corrobora que el  permiso ACCESS_FINE_lOCATION esté
+     * El metodo permite obtener un arreglo con la latitud y lognitud provista por el LocationManager a través
+     * de los permisos de ubicación de la aplicación. Se corrobora que el permiso ACCESS_FINE_lOCATION esté
      * dado para poder obtener los valores.
      *
      * @return latLong: arreglo conformado por latitud y longitud
@@ -181,6 +195,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onImageSaved(@NonNull File file) {
                     String msg = "Pic captured at " + file.getAbsolutePath();
                     successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
+                    // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
+                    try{
+                        ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
+                    } catch (IOException exception){
+                        errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
+                    }
                 }
 
                 @Override
@@ -270,5 +290,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(dashboardIntent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            ftpUploader.disconnect();
+        } catch (IOException e){
+            new ErrorAlert(this).showErrorDialog("Failure while disconnecting from server", e.getMessage());
+        }
     }
 }
