@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             // inicializa la camara si los permisos han sido otorgados por el usuario.
             startCamera();
             // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
-            ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
+            //ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
             latLongImg = getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
@@ -196,11 +196,11 @@ public class MainActivity extends AppCompatActivity {
                     String msg = "Pic captured at " + file.getAbsolutePath();
                     successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
                     // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
-                    try{
+                    /*try{
                         ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
                     } catch (IOException exception){
                         errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
-                    }
+                    }*/
                 }
 
                 @Override
@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    /*
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -300,5 +300,5 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e){
             new ErrorAlert(this).showErrorDialog("Failure while disconnecting from server", e.getMessage());
         }
-    }
+    }*/
 }

@@ -31,18 +31,18 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintDimensionRatio="0.75:1"
+            app:layout_constraintDimensionRatio="0.6:1"
             android:fontFamily="@font/arvo"
             android:text="@string/about_coastsnap"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFF"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="normal"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-            app:lineHeight="28dp" />
+            app:lineHeight="30dp" />
 
         <View
             android:id="@+id/div1"
@@ -62,12 +62,12 @@
             android:text="@string/app_version"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toBottomOf="@+id/div1"
-            app:lineHeight="25dp" />
+            app:lineHeight="30dp" />
 
         <View
             android:id="@+id/div2"
@@ -82,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="0.8:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -93,7 +93,7 @@
             android:id="@+id/white_space"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="50dp"
+            android:minHeight="10dp"
             android:minWidth="0dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"

@@ -18,6 +18,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             android:layout_marginTop="5dp"
+            android:paddingBottom="10dp"
             app:layout_constraintDimensionRatio="3:1"
             android:src="@drawable/logo_social_media_coastsnap_valdivia"
             app:civ_border_color="#81D4FA"
@@ -30,18 +31,18 @@
             android:id="@+id/textView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="1.6:1"
+            app:layout_constraintDimensionRatio="1.65:1"
             android:fontFamily="@font/arvo"
             android:text="@string/about_coastsnap"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFF"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="normal"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
             app:layout_constraintTop_toBottomOf="@+id/circleImageView"
-            app:lineHeight="28dp" />
+            app:lineHeight="32dp" />
 
         <View
             android:id="@+id/div1"
@@ -61,7 +62,7 @@
             android:text="@string/app_version"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -81,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="1.7:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -101,7 +102,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="\n\n\n"
+                android:text="\n"
                 android:textSize="20sp"/>
 
         </LinearLayout>

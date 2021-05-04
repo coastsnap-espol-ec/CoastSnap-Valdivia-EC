@@ -41,14 +41,14 @@
             android:textColor="#FFFFFF"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="0dp"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="normal"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="0.78:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintTop_toBottomOf="@+id/text_home"
-            app:lineHeight="28dp" />
+            app:lineHeight="30dp" />
 
 
         <Button
@@ -57,12 +57,12 @@
             android:layout_height="0dp"
             android:background="@drawable/rounded_corners"
             android:drawableStart="@drawable/ic_baseline_photo_camera_24"
-            android:drawablePadding="2dp"
+            android:drawablePadding="10dp"
             android:fontFamily="@font/mandali"
             android:text="@string/button_text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
             android:textColor="#FFFF"
-            app:layout_constraintDimensionRatio="2:1"
+            app:layout_constraintDimensionRatio="3.25:1.5"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -72,7 +72,7 @@
             android:id="@+id/imgViewSocial"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="35dp"
             android:contentDescription="@string/social_media"
             android:scaleType="centerCrop"
             android:src="@drawable/redes_coastsnap_2"
@@ -82,13 +82,13 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/btnToCamera"
-            app:layout_constraintVertical_bias="0.3" />
+            app:layout_constraintVertical_bias="0.0" />
 
         <Space
             android:id="@+id/white_space_bottom_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="30dp"
+            android:minHeight="100dp"
             android:minWidth="0dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
