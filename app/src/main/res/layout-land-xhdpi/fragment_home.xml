@@ -16,45 +16,47 @@
             android:id="@+id/text_home"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="1dp"
-            android:gravity="center_vertical"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/arvo"
             android:text="@string/home_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:gravity="center_vertical"
             android:textColor="#FFFFFF"
-            android:textSize="26sp"
+            android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/guideline_tope"
             app:layout_constraintBottom_toTopOf="@+id/txtBody"
-            app:layout_constraintDimensionRatio="4:1"
+            app:layout_constraintDimensionRatio="10:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintHorizontal_bias="0.5" />
-
+            app:layout_constraintTop_toTopOf="@id/guideline_tope_fragment_xxhdpi"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/txtBody"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
             android:fontFamily="@font/arvo"
             android:text="@string/home_description"
             android:textAlignment="gravity"
+            android:layout_marginTop="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="normal"
-            app:layout_constraintDimensionRatio="1.18:1"
+            app:layout_constraintBottom_toTopOf="@+id/btnToCamera"
+            app:layout_constraintDimensionRatio="1.6:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/text_home"
-            app:lineHeight="26dp" />
+            app:lineHeight="32dp" />
 
         <Button
             android:id="@+id/btnToCamera"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            android:layout_marginTop="15dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:paddingLeft="10dp"
@@ -64,9 +66,10 @@
             android:drawablePadding="7.5dp"
             android:fontFamily="@font/mandali"
             android:text="@string/button_text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title"
             android:textColor="#FFFF"
-            app:layout_constraintDimensionRatio="3.25:1.5"
+            app:layout_constraintBottom_toTopOf="@+id/imgViewSocial"
+            app:layout_constraintDimensionRatio="6:3"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -76,27 +79,34 @@
             android:id="@+id/imgViewSocial"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="35dp"
             android:contentDescription="@string/social_media"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/redes_coastsnap_2"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="10:3"
+            app:layout_constraintBottom_toTopOf="@+id/bloque"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/btnToCamera"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/btnToCamera" />
 
-        <Space
-            android:id="@+id/white_space_bottom_home"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/bloque"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="70dp"
-            android:minWidth="0dp"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/imgViewSocial" />
+            app:layout_constraintTop_toBottomOf="@+id/imgViewSocial">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="\n\n\n\n"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -113,11 +123,11 @@
             app:layout_constraintGuide_percent="0.95" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_tope"
+            android:id="@+id/guideline_tope_fragment_xxhdpi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.01"/>
+            app:layout_constraintGuide_percent="0.05" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

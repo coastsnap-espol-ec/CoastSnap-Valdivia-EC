@@ -16,13 +16,13 @@
             android:id="@+id/text_home"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="1dp"
-            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/arvo"
+            android:gravity="center_vertical"
             android:text="@string/home_title"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="#FFFFFF"
-            android:textSize="26sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/guideline_tope"
             app:layout_constraintBottom_toTopOf="@+id/txtBody"
@@ -42,14 +42,14 @@
             android:textAlignment="gravity"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textSize="21sp"
             android:textStyle="normal"
-            app:layout_constraintDimensionRatio="1.18:1"
+            app:layout_constraintDimensionRatio="0.68:1"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/text_home"
-            app:lineHeight="26dp" />
+            app:lineHeight="30dp" />
 
         <Button
             android:id="@+id/btnToCamera"
@@ -76,7 +76,7 @@
             android:id="@+id/imgViewSocial"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="40dp"
             android:contentDescription="@string/social_media"
             android:scaleType="centerCrop"
             android:src="@drawable/redes_coastsnap_2"
@@ -92,7 +92,7 @@
             android:id="@+id/white_space_bottom_home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="70dp"
+            android:minHeight="80dp"
             android:minWidth="0dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.01"/>
+            app:layout_constraintGuide_percent="0.035"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
