@@ -12,10 +12,12 @@ import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -96,6 +98,10 @@ public class MainActivity extends AppCompatActivity {
      * @return latLong: arreglo conformado por latitud y longitud
      */
     private ArrayList<Double> getCurrentLocation() {
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        boolean gpsEnabled = false;
+        boolean networkEnabled = false;
+
         final ArrayList<Double> latLong = new ArrayList<>();  //arreglo para almacenar latitud y longitud
         final LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
@@ -105,28 +111,41 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             System.out.println("No hay permisos suficientes");
+            new ErrorAlert(this).showErrorDialog("Failure while checking location permissions", "Por favor, revisar los permisos de obtención de ubicación para que la aplicación pueda funcionar correctamente!");
         } else {
-            LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    super.onLocationResult(locationResult);
-                    LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
-                    if (locationResult != null && locationResult.getLocations().size() > 0)
-                    {
-                        int lastestLocationIndex = locationResult.getLocations().size() - 1;
-                        double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
-                        double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
+            try {
+                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Failure while getting info from GPS_PROVIDER", e.getMessage());
+            }
+            try {
+                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Failure while getting info from NETWORK_PROVIDER", e.getMessage());
+            }
+            if (!gpsEnabled && !networkEnabled){
+                LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        super.onLocationResult(locationResult);
+                        LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
+                        if (locationResult != null && locationResult.getLocations().size() > 0)
+                        {
+                            int lastestLocationIndex = locationResult.getLocations().size() - 1;
+                            double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
+                            double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
 
-                        latLong.add(latitude);
-                        latLong.add(longitude);
+                            latLong.add(latitude);
+                            latLong.add(longitude);
 
-                        System.out.println("Latitud: " + latitude);
-                        System.out.println("Longitud: " + longitude);
-                        // Se muestra el arreglo de latitud y longitud
-                        System.out.println(latLong);
+                            System.out.println("Latitud: " + latitude);
+                            System.out.println("Longitud: " + longitude);
+                            // Se muestra el arreglo de latitud y longitud
+                            System.out.println(latLong);
+                        }
                     }
-                }
-            }, Looper.getMainLooper());
+                }, Looper.getMainLooper());
+            }
         }
         return latLong;
     }
