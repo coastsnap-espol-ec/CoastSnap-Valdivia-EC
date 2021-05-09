@@ -11,6 +11,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -38,8 +39,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,8 +79,7 @@ public class MainActivity extends AppCompatActivity {
         textureView = findViewById(R.id.view_finder);
         takePictureBtn = findViewById(R.id.imgCapture);
 
-        if (allPermissionsGranted())
-        {
+        if (allPermissionsGranted()) {
             // inicializa la camara si los permisos han sido otorgados por el usuario.
             startCamera();
             // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
@@ -108,8 +108,7 @@ public class MainActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(3000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             System.out.println("No hay permisos suficientes");
             new ErrorAlert(this).showErrorDialog("Failure while checking location permissions", "Por favor, revisar los permisos de obtención de ubicación para que la aplicación pueda funcionar correctamente!");
         } else {
@@ -123,14 +122,13 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 new ErrorAlert(this).showErrorDialog("Failure while getting info from NETWORK_PROVIDER", e.getMessage());
             }
-            if (!gpsEnabled && !networkEnabled){
+            if (!gpsEnabled && !networkEnabled) {
                 LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         super.onLocationResult(locationResult);
                         LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
-                        if (locationResult != null && locationResult.getLocations().size() > 0)
-                        {
+                        if (locationResult != null && locationResult.getLocations().size() > 0) {
                             int lastestLocationIndex = locationResult.getLocations().size() - 1;
                             double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
                             double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
@@ -184,11 +182,10 @@ public class MainActivity extends AppCompatActivity {
 
         takePictureBtn.setOnClickListener(v -> {
             File mediaStorageDir = Environment.getExternalStorageDirectory();
-            File directory = new File(mediaStorageDir.getAbsolutePath() + "/SnapCoast-Valdivia");
+            File directory = new File(mediaStorageDir.getAbsolutePath() + "/CoastSnap-Valdivia");
 
             // Create the storage directory if it does not exist
-            if (!directory.exists() && !directory.mkdirs())
-            {
+            if (!directory.exists() && !directory.mkdirs()) {
                 Log.d(APP_TAG, "failed to create directory");
                 System.out.println("Fallo al crear el directorio!");
             }
@@ -209,36 +206,40 @@ public class MainActivity extends AppCompatActivity {
             metadata.location.setLongitude(latLongImg.get(1));
 
             // Verifico si hay espacio disponible en el directorio del proyecto para poder tomar fotos (limite es de  7 MB)
-            imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                @Override
-                public void onImageSaved(@NonNull File file) {
-                    String msg = "Pic captured at " + file.getAbsolutePath();
-                    successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
-                    // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
+            if (directory.getFreeSpace() >= 7000000) {
+                imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                    @Override
+                    public void onImageSaved(@NonNull File file) {
+                        String msg = "Pic captured at " + file.getAbsolutePath();
+                        successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
+                        // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
                     /*try{
                         ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
                     } catch (IOException exception){
                         errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
                     }*/
-                }
-
-                @Override
-                public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                    if (cause != null)
-                    {
-                        //cause.printStackTrace();
-                        String imageCaptureErrorMsg = "Pic capture failed due to: " + cause.toString();
-                        errorAlert.showErrorDialog("Fail to save the taken picture", imageCaptureErrorMsg);
                     }
-                }
-            }, metadata);
+
+                    @Override
+                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
+                        if (cause != null) {
+                            //cause.printStackTrace();
+                            String imageCaptureErrorMsg = "Pic capture failed due to: " + cause.toString();
+                            errorAlert.showErrorDialog("Fail to save the taken picture", imageCaptureErrorMsg);
+                        }
+                    }
+                }, metadata);
+            } else {
+                String errorMsgDirectory = "Not enough space on the CoastSnap-Valdivia folder, please verify the amount of available space and try again!";
+                new ErrorAlert(this).showErrorDialog("Failure while saving the picture", errorMsgDirectory);
+            }
         });
 
         //bind to lifecycle:
         CameraX.bindToLifecycle(this, preview, imgCap);
     }
 
-    private void updateTransform(){
+    private void updateTransform() {
         Matrix mx = new Matrix();
         float w = textureView.getMeasuredWidth();
         float h = textureView.getMeasuredHeight();
@@ -249,8 +250,7 @@ public class MainActivity extends AppCompatActivity {
         int rotationDgr;
         int rotation = (int) textureView.getRotation();
 
-        switch(rotation)
-        {
+        switch (rotation) {
             case Surface.ROTATION_0:
                 rotationDgr = 0;
                 break;
@@ -267,32 +267,28 @@ public class MainActivity extends AppCompatActivity {
                 return;
         }
 
-        mx.postRotate((float)rotationDgr, cX, cY);
+        mx.postRotate((float) rotationDgr, cX, cY);
         textureView.setTransform(mx);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS)
-        {
-            if (allPermissionsGranted())
-            {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
                 startCamera();
                 latLongImg = getCurrentLocation();
             } else {
                 //Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
-                    String requestPermissionFailedMsg = "Permissions not granted by the user.\nPlease go your Settings and allow all the permissions for the app.";
-                    errorAlert.showErrorDialog("Permissions not granted!", requestPermissionFailedMsg);
+                String requestPermissionFailedMsg = "Permissions not granted by the user.\nPlease go your Settings and allow all the permissions for the app.";
+                errorAlert.showErrorDialog("Permissions not granted!", requestPermissionFailedMsg);
             }
         }
     }
 
 
-    private boolean allPermissionsGranted(){
-        for (String permission : REQUIRED_PERMISSIONS)
-        {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
-            {
+    private boolean allPermissionsGranted() {
+        for (String permission : REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
@@ -302,8 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home)
-        {
+        if (item.getItemId() == android.R.id.home) {
             Intent dashboardIntent = new Intent(this, DashboardActivity.class);
             dashboardIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(dashboardIntent);

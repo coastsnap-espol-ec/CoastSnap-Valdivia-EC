@@ -45,11 +45,11 @@ public class AboutUsFragment extends Fragment {
 
     private List<Contact> getData() {
         listContact = new ArrayList<>();
-        listContact.add(new Contact(1, R.drawable.facebook_logo, "Facebook", "Facebook Page", "https://www.facebook.com/coastsnap"));
-        listContact.add(new Contact(2, R.drawable.instagram_logo, "Instagram", "Instagram Page", "https://www.instagram.com/espol_coastsnap_ec/"));
-        listContact.add(new Contact(3, R.drawable.twitter_logo, "Twitter", "Twitter Page", "https://twitter.com/espol_coastsnap"));
-        listContact.add(new Contact(4, R.drawable.youtube_logo, "YouTube", "YouTube Page", "https://www.youtube.com/user/mitchellharley"));
-        listContact.add(new Contact(5, R.drawable.github_logo, "GitHub", "GitHub Page", "https://github.com/coastsnap-espol-ec/CoastSnap-Valdivia-EC"));
+        listContact.add(new Contact(1, R.drawable.facebook_logo, "Facebook", "CoastSnap Valdivia EC", "https://www.facebook.com/coastsnap"));
+        listContact.add(new Contact(2, R.drawable.instagram_logo, "Instagram", "@espol_coastsnap_ec", "https://www.instagram.com/espol_coastsnap_ec/"));
+        listContact.add(new Contact(3, R.drawable.twitter_logo, "Twitter", "@espol_coastsnap", "https://twitter.com/espol_coastsnap"));
+        listContact.add(new Contact(4, R.drawable.youtube_logo, "YouTube", "mitchellharley", "https://www.youtube.com/user/mitchellharley"));
+        listContact.add(new Contact(5, R.drawable.github_logo, "GitHub", "CoastSnap-Valdivia-EC", "https://github.com/coastsnap-espol-ec/CoastSnap-Valdivia-EC"));
 
         return listContact;
     }
