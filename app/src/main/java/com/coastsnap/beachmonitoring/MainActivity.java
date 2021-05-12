@@ -41,6 +41,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,9 +50,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     // Configuraciones servidor FTP
-    private static final String SERVER = "192.168.0.16";             // cambiar por direccion del servidor FTP del proyecto CoastSnap.
-    private static final String USERNAME = "ftpuser";                // cambiar por usuario FTP estblecido para el proyecto.
-    private static final String PASSWD = "pass1234";                 // cambiar por pass del usuario FTP (encriptarlo?)
+    private static final String SERVER = "200.10.147.17";             // cambiar por direccion del servidor FTP del proyecto CoastSnap.
+    private static final String USERNAME = "coastsnap";                // cambiar por usuario FTP estblecido para el proyecto.
+    private static final String PASSWD = "P4ss#V4ld.";                 // cambiar por pass del usuario FTP
     public final String APP_TAG = "SnapCoast App";
     // Permisos de la aplicacion
     private final int REQUEST_CODE_PERMISSIONS = 101;
@@ -83,7 +84,13 @@ public class MainActivity extends AppCompatActivity {
             // inicializa la camara si los permisos han sido otorgados por el usuario.
             startCamera();
             // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
-            //ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
+            try {
+                ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
+                Log.d(APP_TAG, "Conexion existosa!");
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Error connecting to server", e.getMessage());
+                Log.d(APP_TAG, e.getMessage());
+            }
             latLongImg = getCurrentLocation();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
@@ -98,6 +105,22 @@ public class MainActivity extends AppCompatActivity {
      * @return latLong: arreglo conformado por latitud y longitud
      */
     private ArrayList<Double> getCurrentLocation() {
+
+        /*try {
+                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Failure while getting info from GPS_PROVIDER", e.getMessage());
+            }
+            try {
+                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Failure while getting info from NETWORK_PROVIDER", e.getMessage());
+            }
+            if (!gpsEnabled && !networkEnabled) {
+
+            }*/
+
+
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         boolean gpsEnabled = false;
         boolean networkEnabled = false;
@@ -112,38 +135,27 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("No hay permisos suficientes");
             new ErrorAlert(this).showErrorDialog("Failure while checking location permissions", "Por favor, revisar los permisos de obtención de ubicación para que la aplicación pueda funcionar correctamente!");
         } else {
-            try {
-                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Failure while getting info from GPS_PROVIDER", e.getMessage());
-            }
-            try {
-                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Failure while getting info from NETWORK_PROVIDER", e.getMessage());
-            }
-            if (!gpsEnabled && !networkEnabled) {
-                LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        super.onLocationResult(locationResult);
-                        LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
-                        if (locationResult != null && locationResult.getLocations().size() > 0) {
-                            int lastestLocationIndex = locationResult.getLocations().size() - 1;
-                            double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
-                            double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
+            LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    super.onLocationResult(locationResult);
+                    LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
+                    if (locationResult != null && locationResult.getLocations().size() > 0)
+                    {
+                        int lastestLocationIndex = locationResult.getLocations().size() - 1;
+                        double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
+                        double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
 
-                            latLong.add(latitude);
-                            latLong.add(longitude);
+                        latLong.add(latitude);
+                        latLong.add(longitude);
 
-                            System.out.println("Latitud: " + latitude);
-                            System.out.println("Longitud: " + longitude);
-                            // Se muestra el arreglo de latitud y longitud
-                            System.out.println(latLong);
-                        }
+                        System.out.println("Latitud: " + latitude);
+                        System.out.println("Longitud: " + longitude);
+                        // Se muestra el arreglo de latitud y longitud
+                        System.out.println(latLong);
                     }
-                }, Looper.getMainLooper());
-            }
+                }
+            }, Looper.getMainLooper());
         }
         return latLong;
     }
@@ -202,8 +214,13 @@ public class MainActivity extends AppCompatActivity {
             // Se agrega metadata
             ImageCapture.Metadata metadata = new ImageCapture.Metadata();
             metadata.location = new Location("taken picture");
-            metadata.location.setLatitude(latLongImg.get(0));
-            metadata.location.setLongitude(latLongImg.get(1));
+            try {
+                metadata.location.setLatitude(latLongImg.get(0));
+                metadata.location.setLongitude(latLongImg.get(1));
+            } catch (Exception e){
+                new ErrorAlert(this).showErrorDialog("Invalid Index", e.getMessage());
+            }
+
 
             // Verifico si hay espacio disponible en el directorio del proyecto para poder tomar fotos (limite es de  7 MB)
             if (directory.getFreeSpace() >= 7000000) {
@@ -213,17 +230,19 @@ public class MainActivity extends AppCompatActivity {
                         String msg = "Pic captured at " + file.getAbsolutePath();
                         successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
                         // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
-                    /*try{
-                        ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
-                    } catch (IOException exception){
-                        errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
-                    }*/
+                        try{
+                            ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
+                            Log.d(APP_TAG, "Envio exitoso!");
+                        } catch (IOException exception){
+                            errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
+                            Log.d(APP_TAG, exception.getMessage());
+                        }
+                        successAlert.successDialog("Image succesfully saved on FTP server", "Done!", android.R.drawable.ic_dialog_info);
                     }
 
                     @Override
                     public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
                         if (cause != null) {
-                            //cause.printStackTrace();
                             String imageCaptureErrorMsg = "Pic capture failed due to: " + cause.toString();
                             errorAlert.showErrorDialog("Fail to save the taken picture", imageCaptureErrorMsg);
                         }
@@ -278,7 +297,6 @@ public class MainActivity extends AppCompatActivity {
                 startCamera();
                 latLongImg = getCurrentLocation();
             } else {
-                //Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 String requestPermissionFailedMsg = "Permissions not granted by the user.\nPlease go your Settings and allow all the permissions for the app.";
                 errorAlert.showErrorDialog("Permissions not granted!", requestPermissionFailedMsg);
             }
@@ -305,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     /*
     @Override
     protected void onDestroy() {
