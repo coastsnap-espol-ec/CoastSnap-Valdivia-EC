@@ -3,6 +3,7 @@ package com.coastsnap.beachmonitoring;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageCapture;
@@ -11,6 +12,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationManagerCompat;
 
 import android.Manifest;
 import android.content.Context;
@@ -22,6 +24,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
@@ -41,7 +44,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public final String APP_TAG = "SnapCoast App";
     // Permisos de la aplicacion
     private final int REQUEST_CODE_PERMISSIONS = 101;
-    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION"};
+    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"};
     // variables globales
     private ArrayList<Double> latLongImg;
     private ErrorAlert errorAlert;
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         takePictureBtn = findViewById(R.id.imgCapture);
 
         if (allPermissionsGranted()) {
+            Log.d(APP_TAG, "Permisos otorgados!");
             // inicializa la camara si los permisos han sido otorgados por el usuario.
             startCamera();
             // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
@@ -88,10 +91,21 @@ public class MainActivity extends AppCompatActivity {
                 ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
                 Log.d(APP_TAG, "Conexion existosa!");
             } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Error connecting to server", e.getMessage());
+                new ErrorAlert(this).showErrorDialog("Error al conectar con el servidor", e.getMessage());
                 Log.d(APP_TAG, e.getMessage());
             }
-            latLongImg = getCurrentLocation();
+            try {
+                latLongImg = getCurrentLocation();
+                Log.d(APP_TAG, "Arreglo para la imagen: " + latLongImg.toString());
+                if (latLongImg.isEmpty()){
+                    Log.d(APP_TAG, "Arreglo latLongImg esta vacio!");
+                }
+
+            } catch (Exception e) {
+                String eMessage = "Falla al querer obtener al ubicacion del dispositivo. Por favor, verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
+                //new ErrorAlert(this).showErrorDialog("Servicios de ubicación están deshabilitados", eMessage);
+                Log.d(APP_TAG, eMessage);
+            }
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
@@ -100,48 +114,32 @@ public class MainActivity extends AppCompatActivity {
     /**
      * El metodo permite obtener un arreglo con la latitud y lognitud provista por el LocationManager a través
      * de los permisos de ubicación de la aplicación. Se corrobora que el permiso ACCESS_FINE_lOCATION esté
-     * dado para poder obtener los valores.
+     * dado para poder obtener los valores. El metodo lanza una excepcion si no se puede acceder a los servicios
+     * de ubicacion del dispositivo movil.
      *
      * @return latLong: arreglo conformado por latitud y longitud
      */
     private ArrayList<Double> getCurrentLocation() {
 
-        /*try {
-                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Failure while getting info from GPS_PROVIDER", e.getMessage());
-            }
-            try {
-                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Failure while getting info from NETWORK_PROVIDER", e.getMessage());
-            }
-            if (!gpsEnabled && !networkEnabled) {
-
-            }*/
-
-
-        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        boolean gpsEnabled = false;
-        boolean networkEnabled = false;
-
         final ArrayList<Double> latLong = new ArrayList<>();  //arreglo para almacenar latitud y longitud
+
         final LocationRequest locationRequest = new LocationRequest();
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(3000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("No hay permisos suficientes");
-            new ErrorAlert(this).showErrorDialog("Failure while checking location permissions", "Por favor, revisar los permisos de obtención de ubicación para que la aplicación pueda funcionar correctamente!");
-        } else {
+            new ErrorAlert(this).showErrorDialog("No hay permisos suficientes", "Por favor, revisar los permisos de obtención de ubicación para que la aplicación pueda funcionar correctamente!");
+            Log.d(APP_TAG, "No hay permisos suficientes");
+
+        } else if (isLocationEnabled()) {
+            Log.d(APP_TAG, "Servicios de ubicación habilitados");
             LocationServices.getFusedLocationProviderClient(MainActivity.this).requestLocationUpdates(locationRequest, new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
                     super.onLocationResult(locationResult);
                     LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
-                    if (locationResult != null && locationResult.getLocations().size() > 0)
-                    {
+                    if (locationResult != null && locationResult.getLocations().size() > 0) {
                         int lastestLocationIndex = locationResult.getLocations().size() - 1;
                         double latitude = locationResult.getLocations().get(lastestLocationIndex).getLatitude();
                         double longitude = locationResult.getLocations().get(lastestLocationIndex).getLongitude();
@@ -149,14 +147,26 @@ public class MainActivity extends AppCompatActivity {
                         latLong.add(latitude);
                         latLong.add(longitude);
 
-                        System.out.println("Latitud: " + latitude);
-                        System.out.println("Longitud: " + longitude);
+                        Log.d(APP_TAG, "Se ha agregado la latitud y longitud al arreglo!");
+
+                        Log.d(APP_TAG, "Latitud: " + latitude);
+                        Log.d(APP_TAG, "Longitud: " + longitude);
+
                         // Se muestra el arreglo de latitud y longitud
-                        System.out.println(latLong);
+                        Log.d(APP_TAG, latLong.toString());
                     }
                 }
             }, Looper.getMainLooper());
+        } else {
+            Log.d(APP_TAG, "Servicios de ubicación no se encuentran habilitados!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Servicios de ubicación no se encuentran habilitados!")
+                    .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                    .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("OK", null)
+                    .show();
         }
+
         return latLong;
     }
 
@@ -198,15 +208,14 @@ public class MainActivity extends AppCompatActivity {
 
             // Create the storage directory if it does not exist
             if (!directory.exists() && !directory.mkdirs()) {
-                Log.d(APP_TAG, "failed to create directory");
-                System.out.println("Fallo al crear el directorio!");
+                Log.d(APP_TAG, "Falla al crear el directorio!");
             }
 
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
             File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
-            System.out.println("Directorio: " + Environment.getExternalStorageDirectory());
-            System.out.println("Ruta final del archivo: " + file.getAbsolutePath());
+            Log.d(APP_TAG, "Directorio: " + Environment.getExternalStorageDirectory());
+            Log.d(APP_TAG, "Ruta final del archivo: " + file.getAbsolutePath());
 
             // Verificacion de espacio en directorio
             System.out.println("Espacio libre del directorio: " + directory + " es: " + directory.getFreeSpace());
@@ -217,41 +226,42 @@ public class MainActivity extends AppCompatActivity {
             try {
                 metadata.location.setLatitude(latLongImg.get(0));
                 metadata.location.setLongitude(latLongImg.get(1));
-            } catch (Exception e){
-                new ErrorAlert(this).showErrorDialog("Invalid Index", e.getMessage());
+                Log.d(APP_TAG, metadata.location.toString());
+
+            } catch (Exception e) {
+                new ErrorAlert(this).showErrorDialog("Indice inválido", e.getMessage());
+                Log.d(APP_TAG, e.getMessage());
             }
 
-
             // Verifico si hay espacio disponible en el directorio del proyecto para poder tomar fotos (limite es de  7 MB)
-            if (directory.getFreeSpace() >= 7000000) {
-                imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved(@NonNull File file) {
-                        String msg = "Pic captured at " + file.getAbsolutePath();
-                        successAlert.successDialog("Image successfully saved", msg, android.R.drawable.ic_menu_camera);
-                        // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
-                        try{
+
+            imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                @Override
+                public void onImageSaved(@NonNull File file) {
+                    String msg = "Pic captured at " + file.getAbsolutePath();
+                    Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
+                    successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
+
+                    // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
+                        /*try{
                             ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
                             Log.d(APP_TAG, "Envio exitoso!");
                         } catch (IOException exception){
-                            errorAlert.showErrorDialog("Fail to upload the file specified", exception.getMessage());
+                            errorAlert.showErrorDialog("Falla al subir archivo a carpeta destino!", exception.getMessage());
                             Log.d(APP_TAG, exception.getMessage());
                         }
-                        successAlert.successDialog("Image succesfully saved on FTP server", "Done!", android.R.drawable.ic_dialog_info);
-                    }
+                        successAlert.successDialog("Image guardada correctamente en servidor FTP de destino", "Hecho!", android.R.drawable.ic_dialog_info);*/
+                }
 
-                    @Override
-                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                        if (cause != null) {
-                            String imageCaptureErrorMsg = "Pic capture failed due to: " + cause.toString();
-                            errorAlert.showErrorDialog("Fail to save the taken picture", imageCaptureErrorMsg);
-                        }
+                @Override
+                public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
+                    if (cause != null) {
+                        Log.d(APP_TAG, "Falla al capturar la imagen debido a: " + cause.toString());
+                        String imageCaptureErrorMsg = "Falla al capturar la imagen debido a: " + cause.toString();
+                        errorAlert.showErrorDialog("Falla al capturar la imagen", imageCaptureErrorMsg);
                     }
-                }, metadata);
-            } else {
-                String errorMsgDirectory = "Not enough space on the CoastSnap-Valdivia folder, please verify the amount of available space and try again!";
-                new ErrorAlert(this).showErrorDialog("Failure while saving the picture", errorMsgDirectory);
-            }
+                }
+            }, metadata);
         });
 
         //bind to lifecycle:
@@ -295,10 +305,17 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera();
-                latLongImg = getCurrentLocation();
+                try {
+                    latLongImg = getCurrentLocation();
+                } catch (Exception e) {
+                    String eMessage = "Falla al querer obtener al ubicacion del dispositivo, por favor verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
+                    Log.d(APP_TAG, "Desde onRequestPermissionResult: " + eMessage);
+                   // new ErrorAlert(this).showErrorDialog("Servicios de ubicación deshabilitados", eMessage);
+                }
+
             } else {
-                String requestPermissionFailedMsg = "Permissions not granted by the user.\nPlease go your Settings and allow all the permissions for the app.";
-                errorAlert.showErrorDialog("Permissions not granted!", requestPermissionFailedMsg);
+                String requestPermissionFailedMsg = "Permisos denegados por el usuario.\nPor favor, revisar los permisos de la aplicación para el correcto funcionamiento de la app.";
+                errorAlert.showErrorDialog("Permissions no otorgados por usuario!", requestPermissionFailedMsg);
             }
         }
     }
@@ -324,6 +341,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        return LocationManagerCompat.isLocationEnabled(locationManager) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
     /*
     @Override
     protected void onDestroy() {
