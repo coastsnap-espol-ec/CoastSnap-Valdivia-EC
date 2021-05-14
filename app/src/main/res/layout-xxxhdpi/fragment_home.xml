@@ -51,26 +51,67 @@
             app:layout_constraintTop_toBottomOf="@+id/text_home"
             app:lineHeight="26dp" />
 
-        <Button
-            android:id="@+id/btnToCamera"
+        <LinearLayout
+            android:id="@+id/containter_btns"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/rounded_corners"
-            android:drawableStart="@drawable/ic_baseline_photo_camera_24"
-            android:drawablePadding="7.5dp"
-            android:fontFamily="@font/mandali"
-            android:text="@string/button_text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
-            android:textColor="#FFFF"
-            app:layout_constraintDimensionRatio="3.25:1.5"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="2dp"
+            android:paddingTop="10dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="10dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.45"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/txtBody" />
+            app:layout_constraintTop_toBottomOf="@+id/txtBody">
+
+            <Button
+                android:id="@+id/btnToCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners"
+                android:drawableStart="@drawable/ic_baseline_photo_camera_24"
+                android:drawablePadding="7.5dp"
+                android:fontFamily="@font/mandali"
+                android:text="@string/button_text"
+                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+                android:textSize="14sp"
+                android:textColor="#FFFF"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/guideline" />
+
+            <Space
+                android:id="@+id/white_space_linearlayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="15dp"
+                app:layout_constraintEnd_toStartOf="@+id/btnToCamera"
+                app:layout_constraintStart_toStartOf="@+id/btnUploadSFTPServer"/>
+
+
+            <Button
+                android:id="@+id/btnUploadSFTPServer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners"
+                android:drawableStart="@drawable/ic_baseline_desktop_mac_24"
+                android:drawablePadding="5dp"
+                android:fontFamily="@font/mandali"
+                android:text="@string/button_txt"
+                android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Subtitle"
+                android:textSize="14sp"
+                android:textColor="#FFFF"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/guideline" />
+
+
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/imgViewSocial"
@@ -85,7 +126,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/btnToCamera"
+            app:layout_constraintTop_toBottomOf="@+id/containter_btns"
             app:layout_constraintVertical_bias="0.0" />
 
         <Space

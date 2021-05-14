@@ -33,9 +33,10 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.coastsnap.beachmonitoring.ui.home.HomeFragment;
 import com.coastsnap.beachmonitoring.util.ErrorAlert;
-import com.coastsnap.beachmonitoring.util.FTPUploader;
 import com.coastsnap.beachmonitoring.util.SuccessAlert;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
     private TextureView textureView;
     private ImageButton takePictureBtn;
-    private FTPUploader ftpUploader;
+    private File directory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,26 +87,28 @@ public class MainActivity extends AppCompatActivity {
             Log.d(APP_TAG, "Permisos otorgados!");
             // inicializa la camara si los permisos han sido otorgados por el usuario.
             startCamera();
-            // inicializa la conexion con el servidor si los permisos de conexion son provistos por el usuario.
-            try {
-                ftpUploader = new FTPUploader(SERVER, USERNAME, PASSWD);
-                Log.d(APP_TAG, "Conexion existosa!");
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Error al conectar con el servidor", e.getMessage());
-                Log.d(APP_TAG, e.getMessage());
-            }
-            try {
-                latLongImg = getCurrentLocation();
-                Log.d(APP_TAG, "Arreglo para la imagen: " + latLongImg.toString());
-                if (latLongImg.isEmpty()){
-                    Log.d(APP_TAG, "Arreglo latLongImg esta vacio!");
-                }
+            latLongImg = getCurrentLocation();
 
-            } catch (Exception e) {
-                String eMessage = "Falla al querer obtener al ubicacion del dispositivo. Por favor, verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
-                //new ErrorAlert(this).showErrorDialog("Servicios de ubicación están deshabilitados", eMessage);
-                Log.d(APP_TAG, eMessage);
+             directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
+
+            Log.d(APP_TAG, directory.toString());
+
+            if (directory.exists()){
+                //sendFileDirectoryToFragment(directory.toString());
+                System.out.println("Directorio ya existe!");
+            } else {
+                directory.mkdirs();
+                if (directory.isDirectory()){
+                    //sendFileDirectoryToFragment(directory.toString());
+                    System.out.println("Directorio creado exitosamente");
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Falla al crear directorio")
+                            .setMessage("Falla al crear el directorio especificado.\nPath: " + directory.toString() +"\nMkdirs: " + directory.mkdirs())
+                            .show();
+                }
             }
+
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
@@ -203,18 +206,12 @@ public class MainActivity extends AppCompatActivity {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         takePictureBtn.setOnClickListener(v -> {
-            File mediaStorageDir = Environment.getExternalStorageDirectory();
-            File directory = new File(mediaStorageDir.getAbsolutePath() + "/CoastSnap-Valdivia");
 
-            // Create the storage directory if it does not exist
-            if (!directory.exists() && !directory.mkdirs()) {
-                Log.d(APP_TAG, "Falla al crear el directorio!");
-            }
-
+            /*
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
             File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
-            Log.d(APP_TAG, "Directorio: " + Environment.getExternalStorageDirectory());
+            Log.d(APP_TAG, "Directorio: " + Environment.getStorageDirectory().getPath());
             Log.d(APP_TAG, "Ruta final del archivo: " + file.getAbsolutePath());
 
             // Verificacion de espacio en directorio
@@ -224,44 +221,42 @@ public class MainActivity extends AppCompatActivity {
             ImageCapture.Metadata metadata = new ImageCapture.Metadata();
             metadata.location = new Location("taken picture");
             try {
-                metadata.location.setLatitude(latLongImg.get(0));
-                metadata.location.setLongitude(latLongImg.get(1));
-                Log.d(APP_TAG, metadata.location.toString());
+                if (latLongImg.isEmpty()) {
+                    Log.d(APP_TAG, "Arreglo latLong esta vacio!");
+                    new AlertDialog.Builder(this)
+                            .setTitle("No se pudo obtener la ubicacion del dispositivo!")
+                            .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                            .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                            .setNegativeButton("OK", null)
+                            .show();
+                } else {
+                    metadata.location.setLatitude(latLongImg.get(0));
+                    metadata.location.setLongitude(latLongImg.get(1));
+                    Log.d(APP_TAG, metadata.location.toString());
 
+                    imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                        @Override
+                        public void onImageSaved(@NonNull File file) {
+                            String msg = "Pic captured at " + file.getAbsolutePath();
+                            sendFileNameToFragment("IMG_" + timeStamp + ".jpeg");
+                            Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
+                            successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
+
+                        }
+                        @Override
+                        public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
+                            if (cause != null) {
+                                Log.d(APP_TAG, "Falla al capturar la imagen debido a: " + cause.toString());
+                                String imageCaptureErrorMsg = "Falla al capturar la imagen debido a: " + cause.toString();
+                                errorAlert.showErrorDialog("Falla al capturar la imagen", imageCaptureErrorMsg);
+                            }
+                        }
+                    }, metadata);
+                }
             } catch (Exception e) {
                 new ErrorAlert(this).showErrorDialog("Indice inválido", e.getMessage());
                 Log.d(APP_TAG, e.getMessage());
-            }
-
-            // Verifico si hay espacio disponible en el directorio del proyecto para poder tomar fotos (limite es de  7 MB)
-
-            imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                @Override
-                public void onImageSaved(@NonNull File file) {
-                    String msg = "Pic captured at " + file.getAbsolutePath();
-                    Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
-                    successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
-
-                    // Proceso de carga de la imagen al servidor... (Quizas se deba manejar con WorkManager como servicio en segundo plano).
-                        /*try{
-                            ftpUploader.uploadFile(file.getAbsolutePath(), file.getName(), "/files");
-                            Log.d(APP_TAG, "Envio exitoso!");
-                        } catch (IOException exception){
-                            errorAlert.showErrorDialog("Falla al subir archivo a carpeta destino!", exception.getMessage());
-                            Log.d(APP_TAG, exception.getMessage());
-                        }
-                        successAlert.successDialog("Image guardada correctamente en servidor FTP de destino", "Hecho!", android.R.drawable.ic_dialog_info);*/
-                }
-
-                @Override
-                public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                    if (cause != null) {
-                        Log.d(APP_TAG, "Falla al capturar la imagen debido a: " + cause.toString());
-                        String imageCaptureErrorMsg = "Falla al capturar la imagen debido a: " + cause.toString();
-                        errorAlert.showErrorDialog("Falla al capturar la imagen", imageCaptureErrorMsg);
-                    }
-                }
-            }, metadata);
+            }*/
         });
 
         //bind to lifecycle:
@@ -345,14 +340,25 @@ public class MainActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         return LocationManagerCompat.isLocationEnabled(locationManager) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
+
     /*
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            ftpUploader.disconnect();
-        } catch (IOException e){
-            new ErrorAlert(this).showErrorDialog("Failure while disconnecting from server", e.getMessage());
-        }
+    public void sendFileDirectoryToFragment(String fileDir) {
+        Bundle bundle = new Bundle();
+        bundle.putString("pic_dir", fileDir);
+
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
+    }
+
+    public void sendFileNameToFragment(String filename) {
+        Bundle bundle = new Bundle();
+        bundle.putString("pic_filename", filename);
+
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
     }*/
 }
