@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SnapCoast Valdivia EC</string>
+    <string name="app_name">CoastSnap Valdivia EC</string>
     <string name="button_for_taking_picture">Button for taking picture</string>
     <string name="title_activity_dashboard">CoastSnap</string>
     <string name="title_home">Home</string>
