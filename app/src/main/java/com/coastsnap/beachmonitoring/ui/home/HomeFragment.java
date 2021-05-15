@@ -18,12 +18,19 @@ import com.coastsnap.beachmonitoring.MainActivity;
 import com.coastsnap.beachmonitoring.R;
 import com.coastsnap.beachmonitoring.util.SFTPConnector;
 
+import org.apache.commons.io.comparator.LastModifiedFileComparator;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private final String APP_TAG = "CoastSnap";
+    private final String PIC_DIRECTORY = "/storage/emulated/0/Android/data/com.coastsnap.beachmonitoring/files/Pictures/CoastSnap-Valdivia";
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,25 +46,28 @@ public class HomeFragment extends Fragment {
         Button toActivityCamera = (Button) view.findViewById(R.id.btnToCamera);
         Button sendToServer = view.findViewById(R.id.btnUploadSFTPServer);
 
-        /*String fileDir = this.getArguments().getString("pic_dir");
-        String filename = this.getArguments().getString("pic_filename");
-
-        if (filename == null){
-            Log.d(APP_TAG, "no se recibio correctamente el nombre del archivo");
-        }*/
-
         toActivityCamera.setOnClickListener(view1 -> {
             Intent toCamera = new Intent(getActivity(), MainActivity.class);
             startActivity(toCamera);
             getActivity().finish();
         });
 
-        /*
         sendToServer.setOnClickListener(v -> {
+            File lastPicCaptured = findUsingCommonsIO(PIC_DIRECTORY);
+
+            if (lastPicCaptured == null){
+                Log.d(APP_TAG, "Ultima imagen se encuentra vacia");
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Falla al obtener imagen!")
+                        .setMessage("Ha ocurrido un error al momento de obtener la última imagen tomada.")
+                        .setNeutralButton("OK", null)
+                        .show();
+            }
+
             SFTPConnector sftp = new SFTPConnector();
-            try{
-                sftp.uploadFileUsingVfs(fileDir, filename);
-            } catch (IOException ioe){
+            try {
+                sftp.uploadFileUsingVfs(PIC_DIRECTORY, lastPicCaptured.getName());
+            } catch (IOException ioe) {
                 new AlertDialog.Builder(getContext())
                         .setTitle("Falla al enviar imagen hacia el servidor!")
                         .setMessage("Ha ocurrido un error: " + ioe.toString())
@@ -65,6 +75,19 @@ public class HomeFragment extends Fragment {
                         .setNegativeButton("Ok", null)
                         .show();
             }
-        });*/
+        });
     }
+
+    public static File findUsingCommonsIO(String sdir){
+        File dir = new File(sdir);
+        if (dir.isDirectory()) {
+            File[] dirFiles = dir.listFiles((FileFilter) FileFilterUtils.fileFileFilter());
+            if (dirFiles != null && dirFiles.length > 0) {
+                Arrays.sort(dirFiles, LastModifiedFileComparator.LASTMODIFIED_REVERSE);
+                return dirFiles[0];
+            }
+        }
+        return null;
+    }
+
 }

@@ -89,18 +89,20 @@ public class MainActivity extends AppCompatActivity {
             startCamera();
             latLongImg = getCurrentLocation();
 
-             directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
+            directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
 
             Log.d(APP_TAG, directory.toString());
 
             if (directory.exists()){
                 //sendFileDirectoryToFragment(directory.toString());
                 System.out.println("Directorio ya existe!");
+                Log.d(APP_TAG, "Directorio ya existe!");
             } else {
                 directory.mkdirs();
                 if (directory.isDirectory()){
                     //sendFileDirectoryToFragment(directory.toString());
                     System.out.println("Directorio creado exitosamente");
+                    Log.d(APP_TAG, "Directorio creado exitosamente");
                 } else {
                     new AlertDialog.Builder(this)
                             .setTitle("Falla al crear directorio")
@@ -207,15 +209,11 @@ public class MainActivity extends AppCompatActivity {
 
         takePictureBtn.setOnClickListener(v -> {
 
-            /*
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
             File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
-            Log.d(APP_TAG, "Directorio: " + Environment.getStorageDirectory().getPath());
+            Log.d(APP_TAG, "Directorio: " + directory.toString());
             Log.d(APP_TAG, "Ruta final del archivo: " + file.getAbsolutePath());
-
-            // Verificacion de espacio en directorio
-            System.out.println("Espacio libre del directorio: " + directory + " es: " + directory.getFreeSpace());
 
             // Se agrega metadata
             ImageCapture.Metadata metadata = new ImageCapture.Metadata();
@@ -237,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
                     imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
                         @Override
                         public void onImageSaved(@NonNull File file) {
-                            String msg = "Pic captured at " + file.getAbsolutePath();
-                            sendFileNameToFragment("IMG_" + timeStamp + ".jpeg");
+                            String msg = "Imagen guardad en: " + file.getAbsolutePath();
+                            //sendFileNameToFragment("IMG_" + timeStamp + ".jpeg");
                             Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
                             successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
 
@@ -256,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 new ErrorAlert(this).showErrorDialog("Indice inválido", e.getMessage());
                 Log.d(APP_TAG, e.getMessage());
-            }*/
+            }
         });
 
         //bind to lifecycle:
@@ -306,6 +304,27 @@ public class MainActivity extends AppCompatActivity {
                     String eMessage = "Falla al querer obtener al ubicacion del dispositivo, por favor verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
                     Log.d(APP_TAG, "Desde onRequestPermissionResult: " + eMessage);
                    // new ErrorAlert(this).showErrorDialog("Servicios de ubicación deshabilitados", eMessage);
+                }
+                directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
+
+                Log.d(APP_TAG, directory.toString());
+
+                if (directory.exists()){
+                    //sendFileDirectoryToFragment(directory.toString());
+                    System.out.println("Directorio ya existe!");
+                    Log.d(APP_TAG, "Directorio ya existe!");
+                } else {
+                    directory.mkdirs();
+                    if (directory.isDirectory()){
+                        //sendFileDirectoryToFragment(directory.toString());
+                        System.out.println("Directorio creado exitosamente");
+                        Log.d(APP_TAG, "Directorio creado exitosamente");
+                    } else {
+                        new AlertDialog.Builder(this)
+                                .setTitle("Falla al crear directorio")
+                                .setMessage("Falla al crear el directorio especificado.\nPath: " + directory.toString() +"\nMkdirs: " + directory.mkdirs())
+                                .show();
+                    }
                 }
 
             } else {
