@@ -13,9 +13,11 @@ import androidx.camera.core.PreviewConfig;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationManagerCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
@@ -168,7 +170,15 @@ public class MainActivity extends AppCompatActivity {
                     .setTitle("Servicios de ubicación no se encuentran habilitados!")
                     .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
                     .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                    .setNegativeButton("OK", null)
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Probar este cambio!!!
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.show(new HomeFragment());*/
+                        }
+                    })
                     .show();
         }
 
@@ -360,24 +370,39 @@ public class MainActivity extends AppCompatActivity {
         return LocationManagerCompat.isLocationEnabled(locationManager) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    /*
-    public void sendFileDirectoryToFragment(String fileDir) {
-        Bundle bundle = new Bundle();
-        bundle.putString("pic_dir", fileDir);
+    @Override
+    protected void onResume() {
+        if (isLocationEnabled()) {
+            startCamera();
+            try {
+                latLongImg = getCurrentLocation();
+            } catch (Exception e) {
+                String eMessage = "Falla al querer obtener al ubicacion del dispositivo, por favor verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
+                Log.d(APP_TAG, "Desde onRequestPermissionResult: " + eMessage);
+                // new ErrorAlert(this).showErrorDialog("Servicios de ubicación deshabilitados", eMessage);
+            }
+            directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
 
-        HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setArguments(bundle);
+            Log.d(APP_TAG, directory.toString());
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
+            if (directory.exists()) {
+                //sendFileDirectoryToFragment(directory.toString());
+                System.out.println("Directorio ya existe!");
+                Log.d(APP_TAG, "Directorio ya existe!");
+            } else {
+                directory.mkdirs();
+                if (directory.isDirectory()) {
+                    //sendFileDirectoryToFragment(directory.toString());
+                    System.out.println("Directorio creado exitosamente");
+                    Log.d(APP_TAG, "Directorio creado exitosamente");
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Falla al crear directorio")
+                            .setMessage("Falla al crear el directorio especificado.\nPath: " + directory.toString() + "\nMkdirs: " + directory.mkdirs())
+                            .show();
+                }
+            }
+        }
+        super.onResume();
     }
-
-    public void sendFileNameToFragment(String filename) {
-        Bundle bundle = new Bundle();
-        bundle.putString("pic_filename", filename);
-
-        HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setArguments(bundle);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
-    }*/
 }
