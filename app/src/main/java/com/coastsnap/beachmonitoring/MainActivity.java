@@ -217,58 +217,78 @@ public class MainActivity extends AppCompatActivity {
         //Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        takePictureBtn.setOnClickListener(v -> {
+        if (isLocationEnabled()){
+            takePictureBtn.setOnClickListener(v -> {
 
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 
-            File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
-            Log.d(APP_TAG, "Directorio: " + directory.toString());
-            Log.d(APP_TAG, "Ruta final del archivo: " + file.getAbsolutePath());
+                File file = new File(directory + "/" + "IMG_" + timeStamp + ".jpeg");
+                Log.d(APP_TAG, "Directorio: " + directory.toString());
+                Log.d(APP_TAG, "Ruta final del archivo: " + file.getAbsolutePath());
 
-            // Se agrega metadata
-            ImageCapture.Metadata metadata = new ImageCapture.Metadata();
-            metadata.location = new Location("taken picture");
-            try {
-                if (latLongImg.isEmpty()) {
-                    Log.d(APP_TAG, "Arreglo latLong esta vacio!");
-                    new AlertDialog.Builder(this)
-                            .setTitle("No se pudo obtener la ubicacion del dispositivo!")
-                            .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
-                            .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                            .setNegativeButton("OK", null)
-                            .show();
-                } else {
-                    metadata.location.setLatitude(latLongImg.get(0));
-                    metadata.location.setLongitude(latLongImg.get(1));
-                    Log.d(APP_TAG, metadata.location.toString());
+                // Se agrega metadata
+                ImageCapture.Metadata metadata = new ImageCapture.Metadata();
+                metadata.location = new Location("taken picture");
+                try {
+                    if (latLongImg.isEmpty()) {
+                        Log.d(APP_TAG, "Arreglo latLong esta vacio!");
+                        new AlertDialog.Builder(this)
+                                .setTitle("No se pudo obtener la ubicacion del dispositivo!")
+                                .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                                .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                                .setNegativeButton("OK", null)
+                                .show();
+                    } else {
+                        metadata.location.setLatitude(latLongImg.get(0));
+                        metadata.location.setLongitude(latLongImg.get(1));
+                        Log.d(APP_TAG, metadata.location.toString());
 
-                    imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
-                        @Override
-                        public void onImageSaved(@NonNull File file) {
-                            String msg = "Imagen guardad en: " + file.getAbsolutePath();
-                            //sendFileNameToFragment("IMG_" + timeStamp + ".jpeg");
-                            Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
-                            successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
+                        imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                            @Override
+                            public void onImageSaved(@NonNull File file) {
+                                String msg = "Imagen guardad en: " + file.getAbsolutePath();
+                                //sendFileNameToFragment("IMG_" + timeStamp + ".jpeg");
+                                Log.d(APP_TAG, "Imagen guardada correctamente en " + msg);
+                                successAlert.successDialog("Imagen guardada correctamente!", msg, android.R.drawable.ic_menu_camera);
 
-                        }
-                        @Override
-                        public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                            if (cause != null) {
-                                Log.d(APP_TAG, "Falla al capturar la imagen debido a: " + cause.toString());
-                                String imageCaptureErrorMsg = "Falla al capturar la imagen debido a: " + cause.toString();
-                                errorAlert.showErrorDialog("Falla al capturar la imagen", imageCaptureErrorMsg);
                             }
-                        }
-                    }, metadata);
+                            @Override
+                            public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
+                                if (cause != null) {
+                                    Log.d(APP_TAG, "Falla al capturar la imagen debido a: " + cause.toString());
+                                    String imageCaptureErrorMsg = "Falla al capturar la imagen debido a: " + cause.toString();
+                                    errorAlert.showErrorDialog("Falla al capturar la imagen", imageCaptureErrorMsg);
+                                }
+                            }
+                        }, metadata);
+                    }
+                } catch (Exception e) {
+                    new ErrorAlert(this).showErrorDialog("Indice inválido", e.getMessage());
+                    Log.d(APP_TAG, e.getMessage());
                 }
-            } catch (Exception e) {
-                new ErrorAlert(this).showErrorDialog("Indice inválido", e.getMessage());
-                Log.d(APP_TAG, e.getMessage());
-            }
-        });
+            });
+
+        } else {
+            Log.d(APP_TAG, "Servicios de ubicación no se encuentran habilitados!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Servicios de ubicación no se encuentran habilitados!")
+                    .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                    .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Probar este cambio!!!
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.show(new HomeFragment());*/
+                        }
+                    })
+                    .show();
+        }
 
         //bind to lifecycle:
         CameraX.bindToLifecycle(this, preview, imgCap);
+
     }
 
     private void updateTransform() {
@@ -402,7 +422,129 @@ public class MainActivity extends AppCompatActivity {
                             .show();
                 }
             }
+        }else {
+            Log.d(APP_TAG, "Servicios de ubicación no se encuentran habilitados!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Servicios de ubicación no se encuentran habilitados!")
+                    .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                    .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Probar este cambio!!!
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.show(new HomeFragment());*/
+                        }
+                    })
+                    .show();
         }
         super.onResume();
+    }
+
+
+    @Override
+    protected void onRestart() {
+
+        if (isLocationEnabled()) {
+            startCamera();
+            try {
+                latLongImg = getCurrentLocation();
+            } catch (Exception e) {
+                String eMessage = "Falla al querer obtener al ubicacion del dispositivo, por favor verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
+                Log.d(APP_TAG, "Desde onRequestPermissionResult: " + eMessage);
+                // new ErrorAlert(this).showErrorDialog("Servicios de ubicación deshabilitados", eMessage);
+            }
+            directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
+
+            Log.d(APP_TAG, directory.toString());
+
+            if (directory.exists()) {
+                //sendFileDirectoryToFragment(directory.toString());
+                System.out.println("Directorio ya existe!");
+                Log.d(APP_TAG, "Directorio ya existe!");
+            } else {
+                directory.mkdirs();
+                if (directory.isDirectory()) {
+                    //sendFileDirectoryToFragment(directory.toString());
+                    System.out.println("Directorio creado exitosamente");
+                    Log.d(APP_TAG, "Directorio creado exitosamente");
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Falla al crear directorio")
+                            .setMessage("Falla al crear el directorio especificado.\nPath: " + directory.toString() + "\nMkdirs: " + directory.mkdirs())
+                            .show();
+                }
+            }
+        }else {
+            Log.d(APP_TAG, "Servicios de ubicación no se encuentran habilitados!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Servicios de ubicación no se encuentran habilitados!")
+                    .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                    .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Probar este cambio!!!
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.show(new HomeFragment());*/
+                        }
+                    })
+                    .show();
+        }
+        super.onRestart();
+    }
+
+    @Override
+    protected void onPause() {
+        if (isLocationEnabled()) {
+            startCamera();
+            try {
+                latLongImg = getCurrentLocation();
+            } catch (Exception e) {
+                String eMessage = "Falla al querer obtener al ubicacion del dispositivo, por favor verifique\nque los servicios de ubicacion esten habilitados para la aplicación";
+                Log.d(APP_TAG, "Desde onRequestPermissionResult: " + eMessage);
+                // new ErrorAlert(this).showErrorDialog("Servicios de ubicación deshabilitados", eMessage);
+            }
+            directory = new File(this.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "CoastSnap-Valdivia");
+
+            Log.d(APP_TAG, directory.toString());
+
+            if (directory.exists()) {
+                //sendFileDirectoryToFragment(directory.toString());
+                System.out.println("Directorio ya existe!");
+                Log.d(APP_TAG, "Directorio ya existe!");
+            } else {
+                directory.mkdirs();
+                if (directory.isDirectory()) {
+                    //sendFileDirectoryToFragment(directory.toString());
+                    System.out.println("Directorio creado exitosamente");
+                    Log.d(APP_TAG, "Directorio creado exitosamente");
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Falla al crear directorio")
+                            .setMessage("Falla al crear el directorio especificado.\nPath: " + directory.toString() + "\nMkdirs: " + directory.mkdirs())
+                            .show();
+                }
+            }
+        }else {
+            Log.d(APP_TAG, "Servicios de ubicación no se encuentran habilitados!");
+            new AlertDialog.Builder(this)
+                    .setTitle("Servicios de ubicación no se encuentran habilitados!")
+                    .setMessage("Por favor revisar que los servicios de ubicación estén habilitados para la aplicación.")
+                    .setPositiveButton("Ajustes", (dialog, which) -> this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Probar este cambio!!!
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            ft.show(new HomeFragment());*/
+                        }
+                    })
+                    .show();
+        }
+        super.onPause();
     }
 }
