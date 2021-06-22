@@ -390,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
         return LocationManagerCompat.isLocationEnabled(locationManager) && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
+    /**
     @Override
     protected void onResume() {
         if (isLocationEnabled()) {
@@ -433,8 +434,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // Probar este cambio!!!
                             startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.show(new HomeFragment());*/
+                            //FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            //ft.show(new HomeFragment());
                         }
                     })
                     .show();
@@ -487,8 +488,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // Probar este cambio!!!
                             startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.show(new HomeFragment());*/
+                            //FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            //ft.show(new HomeFragment());
                         }
                     })
                     .show();
@@ -539,12 +540,12 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             // Probar este cambio!!!
                             startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-                            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                            ft.show(new HomeFragment());*/
+                            //FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                            //ft.show(new HomeFragment());
                         }
                     })
                     .show();
         }
         super.onPause();
-    }
+    }**/
 }
